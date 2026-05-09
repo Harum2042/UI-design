@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { Camera, Apple, Loader2, RotateCcw, Menu, Shield, User, Image, Settings, Clock } from "lucide-react"
+import { useState, useRef } from "react"
+import { Camera, Apple, Loader2, RotateCcw, Menu, Shield, User, Image } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import {
@@ -10,27 +10,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog"
-import { Checkbox } from "@/components/ui/checkbox"
 
 type Step = "start" | "camera" | "analyzing" | "result"
 
 export function AppleGrader() {
   const [step, setStep] = useState<Step>("start")
   const [grade, setGrade] = useState<string | null>(null)
-  const [showPermissionsModal, setShowPermissionsModal] = useState(true)
-  const [showSettings, setShowSettings] = useState(false)
-  const [permissions, setPermissions] = useState({
-    camera: false,
-    album: false,
-    notification: false,
-  })
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleStartClick = () => {
@@ -71,83 +56,8 @@ export function AppleGrader() {
     setGrade(null)
   }
 
-  const handlePermissionsConfirm = () => {
-    if (permissions.camera && permissions.album) {
-      setShowPermissionsModal(false)
-    }
-  }
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6">
-      {/* Permissions Modal */}
-      <Dialog open={showPermissionsModal} onOpenChange={setShowPermissionsModal}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>앱 권한 요청</DialogTitle>
-            <DialogDescription>
-              앱이 정상 작동하려면 다음 권한이 필요합니다.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-6">
-            {/* Required Permissions */}
-            <div className="space-y-3">
-              <p className="font-semibold text-red-600">필수 권한</p>
-              <div className="flex items-center space-x-3">
-                <Checkbox 
-                  id="camera" 
-                  checked={permissions.camera}
-                  onCheckedChange={(checked) => 
-                    setPermissions({...permissions, camera: checked as boolean})
-                  }
-                />
-                <label htmlFor="camera" className="text-base cursor-pointer">
-                  📷 카메라 접근 권한
-                </label>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Checkbox 
-                  id="album" 
-                  checked={permissions.album}
-                  onCheckedChange={(checked) => 
-                    setPermissions({...permissions, album: checked as boolean})
-                  }
-                />
-                <label htmlFor="album" className="text-base cursor-pointer">
-                  🖼️ 앨범 접근 권한
-                </label>
-              </div>
-            </div>
-
-            {/* Optional Permissions */}
-            <div className="space-y-3">
-              <p className="font-semibold text-gray-600">선택 권한</p>
-              <div className="flex items-center space-x-3">
-                <Checkbox 
-                  id="notification" 
-                  checked={permissions.notification}
-                  onCheckedChange={(checked) => 
-                    setPermissions({...permissions, notification: checked as boolean})
-                  }
-                />
-                <label htmlFor="notification" className="text-base cursor-pointer">
-                  🔔 알림 설정
-                </label>
-              </div>
-            </div>
-
-            {/* Button */}
-            <Button 
-              onClick={handlePermissionsConfirm}
-              disabled={!permissions.camera || !permissions.album}
-              className="w-full"
-            >
-              확인
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
       <Card className="w-full max-w-md p-8 shadow-lg relative">
         {/* Menu Button */}
         <div className="absolute top-4 right-4">
@@ -159,70 +69,31 @@ export function AppleGrader() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-              {!showSettings ? (
-                <>
-                  <DropdownMenuItem className="text-lg py-3 cursor-pointer">
-                    <Apple className="h-5 w-5 mr-3" style={{ color: "#CE2029" }} />
-                    사과 등급 기준표
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    className="text-lg py-3 cursor-pointer"
-                    onSelect={() => setShowSettings(true)}
-                  >
-                    <Settings className="h-5 w-5 mr-3" />
-                    설정
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="text-lg py-3 cursor-pointer">
-                    <User className="h-5 w-5 mr-3" />
-                    회원 가입/로그인
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="text-lg py-3 cursor-pointer">
-                    <Clock className="h-5 w-5 mr-3" />
-                    과거 데이터
-                  </DropdownMenuItem>
-                </>
-              ) : (
-                <>
-                  <DropdownMenuItem 
-                    className="text-lg py-3 cursor-pointer"
-                    onSelect={() => setShowSettings(false)}
-                  >
-                    <span className="mr-2">←</span>
-                    뒤로
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="text-lg py-3 cursor-pointer">
-                    <Shield className="h-5 w-5 mr-3" />
-                    앱 권한
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="text-lg py-3 cursor-pointer">
-                    <User className="h-5 w-5 mr-3" />
-                    계정
-                  </DropdownMenuItem>
-                </>
-              )}
+              <DropdownMenuItem className="text-lg py-3 cursor-pointer">
+                <User className="h-5 w-5 mr-3" />
+                계정
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-lg py-3 cursor-pointer">
+                <Shield className="h-5 w-5 mr-3" />
+                앱 권한
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-lg py-3 cursor-pointer">
+                <Apple className="h-5 w-5 mr-3" style={{ color: "#CE2029" }} />
+                사과 등급 기준표
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-lg py-3 cursor-pointer">
+                <User className="h-5 w-5 mr-3" />
+                회원 가입
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
 
-        {/* Apple Image Display - Only shown in result step */}
-        {step === "result" && (
-          <div className="flex flex-col items-center justify-center mb-8">
-            <div className="w-32 h-32 flex items-center justify-center border-2 border-foreground/20 rounded-xl">
-              <Apple className="w-16 h-16 text-primary" style={{ color: "#CE2029" }} />
-            </div>
-            <p className="text-sm text-muted-foreground mt-2">
-              (실제 사과 이미지)
-            </p>
-          </div>
-        )}
-
         {/* Header */}
-        <div className="text-center mb-4 pt-2">
-          {step !== "result" && (
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-4" style={{ backgroundColor: "#F2F2F2" }}>
-              <Apple className="w-10 h-10" style={{ color: "#CE2029" }} />
-            </div>
-          )}
+        <div className="text-center mb-8 pt-8">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-4" style={{ backgroundColor: "#F2F2F2" }}>
+            <Apple className="w-10 h-10" style={{ color: "#CE2029" }} />
+          </div>
           <h1 className="text-3xl font-bold text-foreground">
             사과 등급 판별기
           </h1>
@@ -244,7 +115,7 @@ export function AppleGrader() {
             </Button>
           )}
 
-           {step === "camera" && (
+          {step === "camera" && (
             <>
               <Button
                 onClick={handleCameraClick}
@@ -290,6 +161,14 @@ export function AppleGrader() {
 
           {step === "result" && (
             <div className="space-y-6">
+              {/* Apple Image Display */}
+              <div className="flex flex-col items-center justify-center py-8 bg-secondary rounded-xl">
+                <Apple className="w-24 h-24 text-primary mb-2" style={{ color: "#CE2029" }} />
+                <p className="text-sm text-muted-foreground">
+                  (실제 사과 이미지)
+                </p>
+              </div>
+
               {/* Result Display */}
               <div className="flex flex-col items-center justify-center py-12 bg-primary/5 rounded-xl border-2 border-primary/20">
                 <p className="text-lg text-muted-foreground mb-2">
@@ -309,13 +188,13 @@ export function AppleGrader() {
                   </p>
                   <div className="space-y-2 text-base text-foreground">
                     <p>
-                      <span className="font-medium">🎨 착색률:</span> 95%
+                      <span className="font-medium">착색률:</span> 95%
                     </p>
                     <p>
-                      <span className="font-medium">📏 크기:</span> 85mm
+                      <span className="font-medium">크기:</span> 85mm
                     </p>
                     <p>
-                      <span className="font-medium">🍫 당도:</span> 13.5Brix
+                      <span className="font-medium">당도:</span> 13.5Brix
                     </p>
                   </div>
                 </div>
